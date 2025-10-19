@@ -1,0 +1,166 @@
+import re
+import random
+letters = ['A','B','C','D','E']; numbers = [1,2,3,4,5]; NUMBERS = ['1','2','3','4','5']
+main_map_list = []; main_map_bot = {}; main_map_player = {};     player_selecting = True
+playes_shooting = True; bot_shooting = True; LETTERS = ['A','B','C','D','E','a','b','c','d','e']
+player_loosed = 0; bot_loosed = 0; player_luck=0;bot_luck=0;HELLO=0
+for a in letters:
+    for i in numbers:
+        main_map_list.extend({a+str(i)})
+for i in main_map_list:
+    main_map_bot.update({i:None})
+    main_map_player.update({i:None})
+bot_sellect = []
+for a in range(6):   
+    u = random.choice(main_map_list)
+    main_map_bot.update({u:'Bot'})
+want_to_play = False
+want = input('Do you want to start the game?:')
+pattern = r'Y\w*'
+want_ornot = re.search(pattern, want, re.IGNORECASE)
+try:
+    if want_ornot.group() is not None:
+        want_to_play = True
+except AttributeError:
+    print('You wrote it wrong try again.')
+def statistics(ABP,ABB,Player_luck,Bot_luck):
+    player_accuracity = Player_luck/ABP
+    bot_accuracity = Bot_luck/ABB
+    return player_accuracity, bot_accuracity
+while want_to_play:
+    list_of_player=[];list_of_bot=[]; ooop = 0;aaap=0; ooob=0;aaab=0
+    B = []; A = []; C = []; D = []
+    for i in range(1, 26):
+        A.extend(main_map_bot.values())
+    for i in range(1, 26):
+        C.extend(main_map_player.values())
+    for i in A:
+        if i == None:
+            B.extend('#')
+        if i == 'Bot' or i == 'Player':
+            B.extend('#')
+        if i == 'Hitted':
+            B.extend('@')
+        if i == 'Fell in water':
+            B.extend('x')
+    for i in C:
+        if i == None:
+            D.extend('#')
+        if i == 'Bot' or i == 'Player':
+            D.extend('0')
+        if i == 'Hitted':
+            D.extend('@')
+        if i == 'Fell in water':
+            D.extend('x')
+
+    A1 = B[0];A2 = B[1];A3 = B[2];A4 = B[3];A5 = B[4]
+    B1 = B[5];B2 = B[6];B3 = B[7];B4 = B[8];B5 = B[9]
+    C1 = B[10];C2 = B[11];C3 = B[12];C4 = B[13];C5 = B[14]
+    D1 = B[15];D2 = B[16];D3 = B[17];D4 = B[18];D5 = B[19]
+    E1 = B[20];E2 = B[21];E3 = B[22];E4 = B[23];E5 = B[24]
+
+    A1_X = D[0];A2_X = D[1];A3_X = D[2];A4_X = D[3];A5_X = D[4]
+    B1_X = D[5];B2_X = D[6];B3_X = D[7];B4_X = D[8];B5_X = D[9]
+    C1_X = D[10];C2_X = D[11];C3_X = D[12];C4_X = D[13];C5_X = D[14]
+    D1_X = D[15];D2_X = D[16];D3_X = D[17];D4_X = D[18];D5_X = D[19]
+    E1_X = D[20];E2_X = D[21];E3_X = D[22];E4_X = D[23];E5_X = D[24]
+    print('   YOUR"S ENEMY"S         YOURS:       ')
+    print('||   1 2 3 4 5   |||   1 2 3 4 5')
+    print('|| A {} {} {} {} {}   ||| A {} {} {} {} {}'.format(A1,A2,A3,A4,A5,A1_X,A2_X,A3_X,A4_X,A5_X))
+    print('|| B {} {} {} {} {}   ||| B {} {} {} {} {}'.format(B1,B2,B3,B4,B5,B1_X,B2_X,B3_X,B4_X,B5_X))
+    print('|| C {} {} {} {} {}   ||| C {} {} {} {} {}'.format(C1,C2,C3,C4,C5,C1_X,C2_X,C3_X,C4_X,C5_X))
+    print('|| D {} {} {} {} {}   ||| D {} {} {} {} {}'.format(D1,D2,D3,D4,D5,D1_X,D2_X,D3_X,D4_X,D5_X))
+    print('|| E {} {} {} {} {}   ||| E {} {} {} {} {}'.format(E1,E2,E3,E4,E5,E1_X,E2_X,E3_X,E4_X,E5_X)) 
+    ABP=0;ABB=0; 
+    while player_selecting:
+        player_sellected_squares = input('Choose 5 squares to put your ships.')
+        patternplayerchoose = r'[.,\s]+'
+        player_squares = re.split(patternplayerchoose, player_sellected_squares)
+        player_choosed_rightsquare = False; ABC = 0
+        player_choose = []
+        for i in player_squares:
+            pattern_1 = r'(\w)(\d)'
+            match = re.search(pattern_1, i)
+            if match.group(1) in LETTERS and match.group(2) in NUMBERS:
+                ABC+= 1
+                player_choose.extend({match.string})
+        if ABC is 5:
+            player_choosed_rightsquare = True
+            for i in player_choose:
+                main_map_player.update({i:'Player'})
+            player_selecting = False
+    playes_shooting = True
+    while playes_shooting:
+        a=input('Choose square in enemys map to attack.: ')
+        if len(a) == 2:
+            pattern_2 = r'(\w)(\d)'
+            match_1 = re.search(pattern_2, a)
+            if match_1.group(1) in LETTERS and match_1.group(2) in NUMBERS:
+                ABP+=1 
+                playes_shooting = False
+                if main_map_bot[a] is None:
+                    main_map_bot.update({a:'Fell in water'})
+                if main_map_bot[a] is 'Bot':
+                    main_map_bot.update({a:'Hitted'})
+                    player_luck+=1
+            else:
+                print('.Your combination is wrong try again.')
+        else:
+            print('Your combination is wrong try again.')
+    bot_shooting = True
+    while bot_shooting:
+        b = random.choice(main_map_list)
+        if main_map_player[b] is None:
+            main_map_player.update({b:'Fell in water'})
+        if main_map_player[b] is 'Player':
+            main_map_player.update({b:'Hitted'})
+            bot_luck+=1
+        ABB+=1
+        bot_shooting = False
+    for i in main_map_player.values():
+        list_of_player.extend({i})
+    for i in main_map_bot.values():
+        list_of_bot.extend({i})
+    for i in list_of_player:
+        if i == 'Player':
+            ooop+=1
+        if i == 'Hitted' or i == None or i == 'Fell in water':
+            aaap+=1
+    for i in list_of_bot:
+        if i == 'Bot':
+            ooob+=1
+        if i == 'Hitted' or i == None or i == 'Fell in water':
+            aaab+=1        
+    if aaap == 25:
+        player_loosed = True
+    if aaab == 25:
+        bot_loosed = True
+        if player_loosed:
+            print('''
+          @Defeat#
+          ''')
+        if bot_loosed:
+            print('''
+          ***WIN***
+          ''')
+        break    
+    HELLO+=1
+uuu = input('''
+        Do you want to see your statistics?
+''')
+HELLO+=1
+pattern_ = r'Y\w*S'
+MMM = False
+AAA = re.search(pattern_, uuu)
+try:
+    if AAA.group() is not None:
+        MMM = True
+except AttributeError:
+    print('try again.ERROR')
+if MMM is True:
+    ggg = statistics(HELLO, HELLO, player_luck, bot_luck)
+    print('''
+###     Your accuracity:{}
+###     Bot accuracity:{}
+###     Game length:{}
+'''.format(ggg[0], ggg[1], HELLO))
