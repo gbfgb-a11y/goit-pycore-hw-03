@@ -54,8 +54,6 @@ def normalize_phone(phone_number):
         cleaned = '+' + digits
     return cleaned
 #Завдання 4
-from datetime import datetime, timedelta
-
 def get_upcoming_birthdays(users):
     today = datetime.today().date()
     upcoming_birthdays = []
