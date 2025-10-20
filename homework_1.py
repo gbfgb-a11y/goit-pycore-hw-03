@@ -1,4 +1,4 @@
-from datetime import datetime; import random; import re
+from datetime import datetime, timedelta; import random; import re
 #Завдання 1
 def get_days_from_today(date):
     try:
