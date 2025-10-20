@@ -15,28 +15,44 @@ def get_days_from_today(date):
 #Завдання 2
 def get_numbers_ticket(min, max, quantity):
     try:
-        final_list=[]
-        for i in range(quantity+1):
-            number = random.randint(min,max)
-            if number not in final_list:
-                final_list.extend({number})
+        # Перевірка коректності вхідних даних
+        if not (isinstance(min, int) and isinstance(max, int) and isinstance(quantity, int)):
+            return []
+        if min < 1 or max > 1000 or min >= max:
+            return []
+        if quantity < 1 or quantity > (max - min + 1):
+            return []
+        final_list = random.sample(range(min, max + 1), quantity)
+        final_list.sort()
         return final_list
     except ValueError:
-    # Якщо дані були введені не коректно
-        return 'Something went wrong. Try again using criteria -> min, max, quanity.'
-
+        # Якщо дані були введені некоректно
+        return []
 #Завдання 3
 def normalize_phone(phone_number):
-    # Видаляємо усе не потрібне
-    normalize_phone_1 = re.sub(r'[ -()]', '', phone_number); ab=None # АБ це такий собі буфер.
-    # Добавляємо + якщо треба
-    if normalize_phone_1[0] != '+':
-        normalize_phone_1 = '+'+normalize_phone_1
-    # Добавляємо 38 якщо треба
-    if normalize_phone_1[1] != '3':
-        ab = re.split(r'(.)(050\d*)',normalize_phone_1)
-        normalize_phone_1 = ab[1]+'38'+ab[2]
-    return normalize_phone_1
+    # Видаляємо все зайве: пробіли, дужки, дефіси, символи табуляції та переводу рядка
+    cleaned = re.sub(r'[\s\-\(\)\\n\\t]', '', phone_number.strip())
+    # Якщо немає + на початку — додаємо
+    if not cleaned.startswith('+'):
+        cleaned = '+' + cleaned
+    # Якщо немає 38 після + — додаємо
+    if not cleaned.startswith('+38'):
+        # Видаляємо всі нецифрові символи після +
+        digits = re.sub(r'\D', '', cleaned)
+        # Якщо після + вже є 380..., залишаємо
+        if digits.startswith('380'):
+            cleaned = '+' + digits
+        # Якщо номер починається з 0, додаємо 38 перед ним
+        elif digits.startswith('0'):
+            cleaned = '+38' + digits
+        # Якщо нічого не підходить — повертаємо як є
+        else:
+            cleaned = '+' + digits
+    else:
+        # Якщо вже є +38 — просто залишаємо тільки цифри після +
+        digits = re.sub(r'\D', '', cleaned)
+        cleaned = '+' + digits
+    return cleaned
 #Завдання 4
 from datetime import datetime, timedelta
 
@@ -66,5 +82,5 @@ def get_upcoming_birthdays(users):
             # Додаємо результат до списку
             upcoming_birthdays.append({
                 "name": user["name"],
-                "congratulation_date": congratulation_date.strftime("%Y.%m.%d")
-            })
+                "congratulation_date": congratulation_date.strftime("%Y.%m.%d")})
+    return upcoming_birthdays
