@@ -1,4 +1,6 @@
-from datetime import datetime; import random; import re
+from datetime import datetime; import random; import re;import sys
+from pathlib import Path
+from colorama import Fore, Style, init
 #Завдання 1
 def total_salary(path):
     try:
@@ -40,10 +42,78 @@ def get_cats_info(path):
             line=re.sub(r'\\n','',line)
             list_text = line.split(',')
             cats_inf.append({'id':list_text[0],'name':list_text[1], 'age':list_text[2]})
-        print(cats_inf)
-        #return cats_inf
+        return cats_inf
 
 
-#cats_info = get_cats_info(r"C:\Users\denke\Desktop\SOMETHING\tests.txt")
-#print(cats_info)
-get_cats_info(r"C:\Users\denke\Desktop\SOMETHING\tests.txt")
+#Завданя 3
+init(autoreset=True)
+
+def print_dir_tree(path: Path, prefix=""):
+    #Рекурсивно печатает структуру директорий.
+    #Папки — синим цветом, файлы — зелёным.
+    if not path.exists():
+        print(Fore.RED + f"Ошибка: путь {path} не существует.")
+        return
+    if not path.is_dir():
+        print(Fore.RED + f"Ошибка: {path} не является директорией.")
+        return
+    # Получаем список всех элементов в директории
+    entries = list(path.iterdir())
+    entries_count = len(entries)
+    for i, entry in enumerate(entries):
+        connector = "┗── " if i == entries_count - 1 else "┣── "
+        if entry.is_dir():
+            print(prefix + connector + Fore.BLUE + f"{entry.name}/")
+            # Рекурсивно печатаем содержимое
+            new_prefix = prefix + ("    " if i == entries_count - 1 else "┃   ")
+            print_dir_tree(entry, new_prefix)
+        else:
+            print(prefix + connector + Fore.GREEN + entry.name)
+def main():
+    # Получаем путь из аргументов командной строки
+    if len(sys.argv) < 2:
+        print("Использование: python hw03.py <путь_к_директории>")
+        sys.exit(1)
+    root_path = Path(sys.argv[1])
+    print(Fore.MAGENTA + f" {root_path.name}")
+    print_dir_tree(root_path)
+if __name__ == "__main__":
+    main()
+# Завданя 4
+def command_spliting(user_inp):
+    cmd, *args = user_inp.split( )
+    cmd = cmd.strip().lower()
+    return cmd, args
+def adding_inf(args, contacts):
+    name, phone = args
+    contacts[name] = phone
+    return f"Contact {name} added."
+
+def get_phonenum(name, contacts):
+    phone = contacts.get(name)
+    if phone:
+        return f"{name}: {phone}"
+    else:
+        return f"No contact named {name}"
+
+def main():
+    contacts = {}
+    print("Welcome to the assistant bot!")
+    while True:
+        user_inp = input("Enter a command: ")
+        command, args = command_spliting(user_inp)
+        if command == 'hello':
+            print('"How can I help you?"')
+        elif command in ['close','exit']:
+            print("Good bye!")
+            break
+        elif command == 'add':
+            print(adding_inf(args, contacts))
+        elif command == 'phone':
+            print(get_phonenum(args[0],contacts))
+        elif command == 'all':
+            print(contacts)
+        else:
+            print("Invalid command.")
+if __name__ == '__main__':
+    main()
